@@ -1,34 +1,32 @@
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode, useEffect, useState, SetStateAction } from "react";
+import { EventCategory } from "@/app/model/event-category.model";
+import { useEffect, useState } from "react";
 
-export function CreateBattleCategory(props: { updateBattleCategories: (data: { 
-    name: string; 
-    participantsNo: number; 
-    id: number; 
-    style: string;
-}) => void; id: any; }) {
-    const [name, setName] = useState('');
-    const [participantsNo, setParticipantsNo] = useState<number>(0);
-    const [style, setStyle] = useState('');
+export function CreateBattleCategory(props: { id: number; updateBattleCategories: (data: { id: any; eventCategory: EventCategory; }) => void; }) {
+    const [eventCategory, setEventCategory] = useState<EventCategory>(new EventCategory({Id: props.id, Name: '', Style: '', ParticipantsPerTeam: 0}));
 
     useEffect(() => {
         props.updateBattleCategories({
             id: props.id,
-            name: name,
-            participantsNo: participantsNo,
-            style: style
+            eventCategory: eventCategory
         })
-    });
+    }, [eventCategory]);
 
-    const categoryUpdated = (event: { target: { value: SetStateAction<string>; }; }) => {
-        setName(event.target.value);
+    const categoryNameUpdated = (event: { target: { value: string; }; }) => {
+        let category = new EventCategory(eventCategory);
+        category.Name = event.target.value;
+        setEventCategory(category);
     }
 
-    const participantsNoUpdated = (event: { target: { value: SetStateAction<string | undefined>; }; }) => {
-        setParticipantsNo(Number(event.target.value));
+    const participantsNoUpdated = (event: { target: { value: string; }; }) => {
+        let category = new EventCategory(eventCategory);
+        category.ParticipantsPerTeam = Number(event.target.value);
+        setEventCategory(category);
     }
 
-    const styleChanged = (event: { target: { value: any; }; }) => {
-        setStyle(event.target.value);
+    const styleChanged = (event: { target: { value: string; }; }) => {
+        let category = new EventCategory(eventCategory);
+        category.Style = event.target.value;
+        setEventCategory(category);
     }
 
     return (
@@ -36,15 +34,15 @@ export function CreateBattleCategory(props: { updateBattleCategories: (data: {
             <tbody>     
                 <tr>
                     <td><label>Category</label></td>
-                    <td><input type="text" value={name} onChange={categoryUpdated}/></td>
+                    <td><input type="text" value={eventCategory.Name} onChange={categoryNameUpdated}/></td>
                 </tr>
                 <tr>
                     <td><label>Participants per team</label></td>
-                    <td><input type="number" value={participantsNo} onChange={participantsNoUpdated}/></td>
+                    <td><input type="number" value={eventCategory.ParticipantsPerTeam} onChange={participantsNoUpdated}/></td>
                 </tr>
                 <tr>
                     <td><label>Style</label></td>
-                    <td><input type="text" value={style} onChange={styleChanged}/></td>
+                    <td><input type="text" value={eventCategory.Style} onChange={styleChanged}/></td>
                 </tr>
             </tbody>
         </table>

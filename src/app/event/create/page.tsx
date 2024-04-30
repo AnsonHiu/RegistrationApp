@@ -40,9 +40,11 @@ export default function CreateEvent() {
         ParticipantsPerTeam: battleCategory.participantsNo,
         Style: battleCategory.style
       });
+      console.log('existing categories', eventCategories);
+      console.log('equals', category.equals(eventCategories[categoryIndex]));
       if(!category.equals(eventCategories[categoryIndex])){
         const newCategories = [...eventCategories.slice(0, categoryIndex), category, ...eventCategories.slice(categoryIndex+1)];
-        console.log(newCategories);
+        console.log('newCategories', newCategories);
         setEventCategories([...eventCategories.slice(0, categoryIndex), category, ...eventCategories.slice(categoryIndex+1)]);
       }
     }
@@ -57,8 +59,8 @@ export default function CreateEvent() {
                   <button type="button" className="secondary" onClick={addCategory}>Add Category</button>
               </div>
               <div className="flex flex-col">
-                {eventCategories.map((eventCategory) => (
-                  <CreateBattleCategory key={eventCategory.Id} id={eventCategory.Id} updateBattleCategories={updateBattleCategories} />
+                {eventCategories.map((eventCategory, index) => (
+                  <CreateBattleCategory key={index} id={eventCategory.Id} updateBattleCategories={updateBattleCategories} />
                 ))}
               </div>
               {submitButton}

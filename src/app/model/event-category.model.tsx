@@ -6,9 +6,9 @@ export class EventCategory {
         this.ParticipantsPerTeam = data.ParticipantsPerTeam;
     }
 
-    Id: number | undefined;
+    Id: number;
     Name: string;
-    Style: string | undefined;
+    Style: string;
     ParticipantsPerTeam: number;
 
     public equals (eventCategory: EventCategory): boolean {
