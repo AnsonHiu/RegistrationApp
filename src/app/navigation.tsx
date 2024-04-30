@@ -20,7 +20,7 @@ export function Navigation(){
           <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
             <div className="text-sm flex">
               {urls.map((url, index) => (
-                  <Link href={url.href} className={clsx({ 'bg-sky-100 text-blue-600': pathname === url.href })}>
+                  <Link key={index} href={url.href} className={clsx({ 'bg-sky-100 text-blue-600': pathname === url.href })}>
                     {url.name}
                   </Link>)
               )}
