@@ -1,8 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
  
-export async function GET(request: Request) {
-
+export async function RecreateTables() {
     try {
         const drop_table_result = await sql`DROP TABLE Participants, Teams, EventCategories, Events`
         const create_event_result = await sql`CREATE TABLE Events (Id SERIAL PRIMARY KEY, Name varchar(100));`;

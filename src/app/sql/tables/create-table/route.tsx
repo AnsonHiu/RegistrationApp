@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
  
-export async function GET(request: Request) {
+export async function CreateTables() {
 
     try {
         const create_event_result = await sql`CREATE TABLE Events (Id SERIAL PRIMARY KEY, Name varchar(100));`;
