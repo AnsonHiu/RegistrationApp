@@ -37,14 +37,11 @@ export default function CreateEvent() {
       event.preventDefault();
       await addEventCommand(eventName);
       const events = await getEventsByName(eventName);
-      console.log('events: ', events);
       const eventId = events[0].id;
-      console.log('eventId: ', eventId);
       const command = JSON.parse(JSON.stringify(new AddCategoriesCommand({
         eventCategories: eventCategories,
         eventId: eventId
       })));
-      console.log('client side command', command);
       await addCategoriesCommandHandler(command);
     };
   
