@@ -1,20 +1,13 @@
-export class EventCategory {
-    constructor(data: {Id: number, Name: string, Style: string, ParticipantsPerTeam: number}){
-        this.Id = data.Id;
-        this.Name = data.Name;
-        this.Style = data.Style;
-        this.ParticipantsPerTeam = data.ParticipantsPerTeam;
+export default class EventCategory {
+    constructor(data: {id: number, name: string, style: string, participantsperteam: number}){
+        this.id = data.id;
+        this.name = data.name;
+        this.style = data.style;
+        this.participantsperteam = data.participantsperteam;
     }
 
-    Id: number;
-    Name: string;
-    Style: string;
-    ParticipantsPerTeam: number;
-
-    public equals (eventCategory: EventCategory): boolean {
-        return eventCategory?.Id == this.Id && 
-            eventCategory?.Name == this.Name && 
-            eventCategory?.Style == this.Style && 
-            eventCategory?.ParticipantsPerTeam == this.ParticipantsPerTeam;
-    }
+    id: number;
+    name: string;
+    style: string;
+    participantsperteam: number;
 }

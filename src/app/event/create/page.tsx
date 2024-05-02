@@ -2,8 +2,11 @@
 
 import { SetStateAction, useState } from "react";
 import { CreateBattleCategory } from "./battle-category";
-import { addEventCommand } from "@/app/sql/command/insert-event/insert-event";
-import { EventCategory } from "@/app/model/event-category.model";
+import { addEventCommand } from "@/app/sql/command/insert-event";
+import EventCategory from "@/app/model/event-category.model";
+import { getEventsByName } from "@/app/sql/query/get-events";
+import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
+import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
 
 export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
@@ -17,37 +20,33 @@ export default function CreateEvent() {
     }
   
     const addCategory = () => {
-      setEventCategories([...eventCategories, new EventCategory({Id: categoryIndex, Name: '', ParticipantsPerTeam: 0, Style: ''})]);
-      console.log(categoryIndex);
+      setEventCategories([...eventCategories, new EventCategory({id: categoryIndex, name: '', participantsperteam: 0, style: ''})]);
       setCategoryIndex(categoryIndex+1);
     }
   
     const updateBattleName = (event: { target: { value: SetStateAction<string>; }; }) => {
       setEventName(event.target.value);
     };
+
+    const updateBattleCategories = (update: {id: number, eventCategory: EventCategory}) => {
+      let categoryIndex = eventCategories.findIndex(category => category.id == update.id);
+      setEventCategories([...eventCategories.slice(0, categoryIndex), update.eventCategory, ...eventCategories.slice(categoryIndex+1)]);
+    }
   
     const createEvent = async (event: {preventDefault: () => void}) => {
       event.preventDefault();
       await addEventCommand(eventName);
+      const events = await getEventsByName(eventName);
+      console.log('events: ', events);
+      const eventId = events[0].id;
+      console.log('eventId: ', eventId);
+      const command = JSON.parse(JSON.stringify(new AddCategoriesCommand({
+        eventCategories: eventCategories,
+        eventId: eventId
+      })));
+      console.log('client side command', command);
+      await addCategoriesCommandHandler(command);
     };
-
-    const updateBattleCategories = (battleCategory: any) => {
-      console.log(battleCategory);
-      let categoryIndex = eventCategories.findIndex(category => category.Id == battleCategory.Id);
-      const category = new EventCategory({
-        Id: battleCategory.Id, 
-        Name: battleCategory.Name, 
-        ParticipantsPerTeam: battleCategory.participantsNo,
-        Style: battleCategory.style
-      });
-      console.log('existing categories', eventCategories);
-      console.log('equals', category.equals(eventCategories[categoryIndex]));
-      if(!category.equals(eventCategories[categoryIndex])){
-        const newCategories = [...eventCategories.slice(0, categoryIndex), category, ...eventCategories.slice(categoryIndex+1)];
-        console.log('newCategories', newCategories);
-        setEventCategories([...eventCategories.slice(0, categoryIndex), category, ...eventCategories.slice(categoryIndex+1)]);
-      }
-    }
   
     return (
       <div className="mt-5 ml-5">
@@ -60,7 +59,7 @@ export default function CreateEvent() {
               </div>
               <div className="flex flex-col">
                 {eventCategories.map((eventCategory, index) => (
-                  <CreateBattleCategory key={index} id={eventCategory.Id} updateBattleCategories={updateBattleCategories} />
+                  <CreateBattleCategory key={index} id={eventCategory.id} updateBattleCategory={updateBattleCategories} />
                 ))}
               </div>
               {submitButton}

@@ -1,11 +1,11 @@
-import { EventCategory } from "@/app/model/event-category.model";
+import EventCategory from "@/app/model/event-category.model";
 import { useEffect, useState } from "react";
 
-export function CreateBattleCategory(props: { id: number; updateBattleCategories: (data: { id: any; eventCategory: EventCategory; }) => void; }) {
-    const [eventCategory, setEventCategory] = useState<EventCategory>(new EventCategory({Id: props.id, Name: '', Style: '', ParticipantsPerTeam: 0}));
+export function CreateBattleCategory(props: { id: number; updateBattleCategory: (data: { id: any; eventCategory: EventCategory; }) => void; }) {
+    const [eventCategory, setEventCategory] = useState<EventCategory>(new EventCategory({id: props.id, name: '', style: '', participantsperteam: 0}));
 
     useEffect(() => {
-        props.updateBattleCategories({
+        props.updateBattleCategory({
             id: props.id,
             eventCategory: eventCategory
         })
@@ -13,19 +13,19 @@ export function CreateBattleCategory(props: { id: number; updateBattleCategories
 
     const categoryNameUpdated = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
-        category.Name = event.target.value;
+        category.name = event.target.value;
         setEventCategory(category);
     }
 
     const participantsNoUpdated = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
-        category.ParticipantsPerTeam = Number(event.target.value);
+        category.participantsperteam = Number(event.target.value);
         setEventCategory(category);
     }
 
     const styleChanged = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
-        category.Style = event.target.value;
+        category.style = event.target.value;
         setEventCategory(category);
     }
 
@@ -34,15 +34,15 @@ export function CreateBattleCategory(props: { id: number; updateBattleCategories
             <tbody>     
                 <tr>
                     <td><label>Category</label></td>
-                    <td><input type="text" value={eventCategory.Name} onChange={categoryNameUpdated}/></td>
+                    <td><input type="text" value={eventCategory.name} onChange={categoryNameUpdated}/></td>
                 </tr>
                 <tr>
                     <td><label>Participants per team</label></td>
-                    <td><input type="number" value={eventCategory.ParticipantsPerTeam} onChange={participantsNoUpdated}/></td>
+                    <td><input type="number" value={eventCategory.participantsperteam} onChange={participantsNoUpdated}/></td>
                 </tr>
                 <tr>
                     <td><label>Style</label></td>
-                    <td><input type="text" value={eventCategory.Style} onChange={styleChanged}/></td>
+                    <td><input type="text" value={eventCategory.style} onChange={styleChanged}/></td>
                 </tr>
             </tbody>
         </table>
