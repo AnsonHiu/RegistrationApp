@@ -16,19 +16,19 @@ export function CreateBattleCategory(
         });
     }
 
-    const categoryNameUpdated = (event: { target: { value: string; }; }) => {
+    const categoryNameUpdated = (event: React.ChangeEvent<HTMLInputElement>) => {
         let category = new EventCategory(props.eventCategory);
         category.name = event.target.value;
         handleCategoryUpdated(category);
     }
 
-    const participantsNoUpdated = (event: { target: { value: string; }; }) => {
+    const participantsNoUpdated = (event: React.ChangeEvent<HTMLInputElement>) => {
         let category = new EventCategory(props.eventCategory);
         category.participantsperteam = Number(event.target.value);
         handleCategoryUpdated(category);
     }
 
-    const styleChanged = (event: { target: { value: string; }; }) => {
+    const styleChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
         let category = new EventCategory(props.eventCategory);
         category.style = event.target.value;
         handleCategoryUpdated(category);
