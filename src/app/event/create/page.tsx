@@ -52,7 +52,7 @@ export default function CreateEvent() {
               </div>
               <div className="flex flex-col">
                 {eventCategories.map((eventCategory, index) => (
-                  <CreateBattleCategory key={index} id={eventCategory.id} updateBattleCategory={updateBattleCategories} />
+                  <CreateBattleCategory key={index} eventCategory={eventCategory} updateBattleCategory={updateBattleCategories} />
                 ))}
               </div>
               {showSubmitButton && <button type="submit" className="button primary mt-5">Submit</button>}

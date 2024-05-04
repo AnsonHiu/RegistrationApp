@@ -5,10 +5,6 @@ import Link from "next/link";
 export default async function ViewEvents(){
     const events: Event[] = await getEvents();
 
-    const getAllEvents = async () => {
-        return await getEvents();
-    }
-
     return (
         <ul>
             {events.map((event, index) => (
