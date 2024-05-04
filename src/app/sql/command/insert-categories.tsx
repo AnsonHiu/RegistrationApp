@@ -12,7 +12,7 @@ export default async function addCategoriesCommandHandler(command: AddCategories
     } catch (error) {
         return { message: error, status: 500 };
     }
-    redirect('/');
+    redirect('/event');
 }
 
 async function addCategory(category: EventCategory, eventId: number): Promise<QueryResult<QueryResultRow>> {

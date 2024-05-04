@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 export function Navigation(){
   const urls = [
     {name: 'Main', href: '/'},
-    {name: 'Create Event', href: '/event/create'}
+    {name: 'Create Event', href: '/event/create'},
+    {name: 'Events', href: '/event'}
   ]
   const pathname = usePathname();
     return (  

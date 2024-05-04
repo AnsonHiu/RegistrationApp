@@ -4,7 +4,7 @@ import { SetStateAction, useState } from "react";
 import { CreateBattleCategory } from "./battle-category";
 import { addEventCommand } from "@/app/sql/command/insert-event";
 import EventCategory from "@/app/model/event-category.model";
-import { getEventsByName } from "@/app/sql/query/get-events";
+import { getEventsByName } from "@/app/sql/query/get-events-by-name";
 import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
 import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
 
