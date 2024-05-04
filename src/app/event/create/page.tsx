@@ -15,16 +15,16 @@ export default function CreateEvent() {
   
     const showSubmitButton = eventCategories.length > 0;
 
-    const updateBattleName = (event: { target: { value: SetStateAction<string>; }; }) => {
+    const updateEventName = (event: { target: { value: SetStateAction<string>; }; }) => {
       setEventName(event.target.value);
     };
   
-    const addCategory = () => {
+    const addEventCategory = () => {
       setEventCategories([...eventCategories, new EventCategory({id: categoryIndex, name: '', participantsperteam: 0, style: ''})]);
       setCategoryIndex(categoryIndex+1);
     }
 
-    const updateBattleCategories = (update: {id: number, eventCategory: EventCategory}) => {
+    const updateEventCategories = (update: {id: number, eventCategory: EventCategory}) => {
       let categoryIndex = eventCategories.findIndex(category => category.id == update.id);
       setEventCategories([...eventCategories.slice(0, categoryIndex), update.eventCategory, ...eventCategories.slice(categoryIndex+1)]);
     }
@@ -46,13 +46,12 @@ export default function CreateEvent() {
           <form onSubmit={createEvent} className="flex flex-col">
               <h1>Create Event</h1>
               <div className="flex flex-row mt-5">
-                  <label htmlFor="event-name">Event Name</label>
-                  <input id="event-name" type="text" onChange={updateBattleName}/>
-                  <button type="button" className="secondary" onClick={addCategory}>Add Category</button>
+                  <input id="event-name" type="text" onChange={updateEventName} placeholder="Event Name"/>
+                  <button type="button" className="secondary" onClick={addEventCategory}>Add Category</button>
               </div>
               <div className="flex flex-col">
                 {eventCategories.map((eventCategory, index) => (
-                  <CreateBattleCategory key={index} eventCategory={eventCategory} updateBattleCategory={updateBattleCategories} />
+                  <CreateBattleCategory key={index} eventCategory={eventCategory} updateBattleCategory={updateEventCategories} />
                 ))}
               </div>
               {showSubmitButton && <button type="submit" className="button primary mt-5">Submit</button>}

@@ -27,6 +27,15 @@ input[type=text], input[type=number] {
     }
 }
 
+input[type=checkbox] {
+    border-radius: 0.25rem; 
+    border-color: #D1D5DB; 
+    width: 1.1rem; 
+    height: 1.1rem; 
+    color: #2563EB; 
+    background-color: #F3F4F6; 
+}
+
 label {
     display: block; 
     margin-right: 0.5rem; 
