@@ -12,21 +12,17 @@ export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
     const [eventCategories, setEventCategories] = useState<EventCategory[]>([]);
     const [categoryIndex, setCategoryIndex] = useState(0);
-    let submitButton;
-    if(eventCategories.length > 0){
-      submitButton = <button type="submit" className="button primary mt-5">Submit</button>
-    } else {
-      submitButton = '';
-    }
+  
+    const showSubmitButton = eventCategories.length > 0;
+
+    const updateBattleName = (event: { target: { value: SetStateAction<string>; }; }) => {
+      setEventName(event.target.value);
+    };
   
     const addCategory = () => {
       setEventCategories([...eventCategories, new EventCategory({id: categoryIndex, name: '', participantsperteam: 0, style: ''})]);
       setCategoryIndex(categoryIndex+1);
     }
-  
-    const updateBattleName = (event: { target: { value: SetStateAction<string>; }; }) => {
-      setEventName(event.target.value);
-    };
 
     const updateBattleCategories = (update: {id: number, eventCategory: EventCategory}) => {
       let categoryIndex = eventCategories.findIndex(category => category.id == update.id);
@@ -59,7 +55,7 @@ export default function CreateEvent() {
                   <CreateBattleCategory key={index} id={eventCategory.id} updateBattleCategory={updateBattleCategories} />
                 ))}
               </div>
-              {submitButton}
+              {showSubmitButton && <button type="submit" className="button primary mt-5">Submit</button>}
           </form>
     </div>
     );

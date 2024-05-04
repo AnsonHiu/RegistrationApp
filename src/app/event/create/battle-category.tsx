@@ -1,32 +1,42 @@
 import EventCategory from "@/app/model/event-category.model";
 import { useEffect, useState } from "react";
 
-export function CreateBattleCategory(props: { id: number; updateBattleCategory: (data: { id: any; eventCategory: EventCategory; }) => void; }) {
+export function CreateBattleCategory(
+    props: {
+        id: number,
+        updateBattleCategory: (data: {
+            id: number;
+            eventCategory: EventCategory;
+       }) => void 
+    }) {
     const [eventCategory, setEventCategory] = useState<EventCategory>(new EventCategory({id: props.id, name: '', style: '', participantsperteam: 0}));
 
-    useEffect(() => {
+    const handleCategoryUpdated = (category: EventCategory) => {
         props.updateBattleCategory({
             id: props.id,
-            eventCategory: eventCategory
-        })
-    }, [eventCategory]);
+            eventCategory: category
+        });
+    }
 
     const categoryNameUpdated = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
         category.name = event.target.value;
         setEventCategory(category);
+        handleCategoryUpdated(category);
     }
 
     const participantsNoUpdated = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
         category.participantsperteam = Number(event.target.value);
         setEventCategory(category);
+        handleCategoryUpdated(category);
     }
 
     const styleChanged = (event: { target: { value: string; }; }) => {
         let category = new EventCategory(eventCategory);
         category.style = event.target.value;
         setEventCategory(category);
+        handleCategoryUpdated(category);
     }
 
     return (
