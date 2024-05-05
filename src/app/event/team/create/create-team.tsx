@@ -18,7 +18,7 @@ export default function CreateTeam(props: { id: number, team: Team, updateTeam: 
 
     function updateSignedIn(event: React.ChangeEvent<HTMLInputElement>) {
         let teamToUpdate = new Team(props.team);
-        teamToUpdate.signedIn = event.target.checked;
+        teamToUpdate.signedin = event.target.checked;
         props.updateTeam(teamToUpdate);        
     }
 

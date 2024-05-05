@@ -12,6 +12,7 @@ import addTeamsCommandHandler from "@/app/sql/command/insert-teams";
 import AddParticipantsCommand from "@/app/model/commands/add-participants-command.model";
 import AddTeamsCommand from "@/app/model/commands/add-teams-command.model";
 import { getParticipants } from "@/app/sql/query/get-participants";
+import { getTeams } from "@/app/sql/query/get-teams";
 
 export default function EventCategoryView(props: { eventCategory: EventCategory }){
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -22,14 +23,29 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
     useEffect(() => {
         let cancel = false;
 
-        async function fetchEvents() {
+        async function fetchParticipants() {
             if(cancel) {
                 return;
             }
             const participants = await getParticipants(props.eventCategory.id);
             setParticipants(participants);
         }
-        fetchEvents().catch(console.log);
+        fetchParticipants().catch(console.log);
+
+        return () => { cancel = true };
+    }, []);
+
+    useEffect(() => {
+        let cancel = false;
+
+        async function fetchTeams() {
+            if(cancel) {
+                return;
+            }
+            const teams = await getTeams(props.eventCategory.id);
+            setTeams(teams);
+        }
+        fetchTeams().catch(console.log);
 
         return () => { cancel = true };
     }, []);
@@ -40,7 +56,7 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
     }
     
     function addTeam() {
-        const newTeam = new Team({id: undefined, name: '', paid: false, signedIn: false});
+        const newTeam = new Team({id: undefined, name: '', paid: false, signedin: false});
         setNewTeams([...newTeams, newTeam]);
     }
 
@@ -107,7 +123,6 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                 <CreateTeam key={index} id={index} team={team} updateTeam={updateTeam}/>
             ))}
             <h2 className="mt-5">Participants</h2>
-            { participants.map((participant, index) => (
                     <table className="mt-5">
                         <thead>
                             <tr>
@@ -117,14 +132,33 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                             </tr>
                         </thead>
                         <tbody>
-                            <tr key={index}>
-                                <td>{participant.dancername}</td>
-                                <td>{participant.paid}</td>
-                                <td>{participant.signedin}</td>
-                            </tr>
+                            { participants.map((participant, index) => (
+                                <tr key={index}>
+                                    <td>{participant.dancername}</td>
+                                    <td>{participant.paid}</td>
+                                    <td>{participant.signedin}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
-            ))}
+                    <table className="mt-5">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Paid</td>
+                                <td>Signed In</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { teams.map((team, index) => (
+                                <tr key={index}>
+                                    <td>{team.name}</td>
+                                    <td>{team.paid}</td>
+                                    <td>{team.signedin}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
             { (newParticipants.length > 0 || newTeams.length > 0) && <button className="primary mt-5" onClick={save}>Save</button>}
         </div>
     );

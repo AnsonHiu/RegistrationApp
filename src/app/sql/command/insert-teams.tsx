@@ -15,5 +15,5 @@ export default async function addTeamsCommandHandler(command: AddTeamsCommand) {
 
 async function addTeam(team: Team, eventCategoryId: number): Promise<QueryResult<QueryResultRow>> {
     return sql`INSERT INTO Teams (Name, SignedIn, Paid, EventCategoryId) 
-    VALUES(${team.name}, ${team.signedIn ? '1':'0'}, ${team.paid ? '1':'0'}, ${eventCategoryId})`;
+    VALUES(${team.name}, ${team.signedin ? '1':'0'}, ${team.paid ? '1':'0'}, ${eventCategoryId})`;
 }
