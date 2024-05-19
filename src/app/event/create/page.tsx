@@ -1,12 +1,13 @@
 'use client';
 
 import { SetStateAction, useState } from "react";
-import { CreateBattleCategory } from "./battle-category";
+import { CreateBattleCategory } from "../../components/create-battle-category";
 import { addEventCommand } from "@/app/sql/command/insert-event";
 import EventCategory from "@/app/model/event-category.model";
 import { getEventsByName } from "@/app/sql/query/get-events-by-name";
 import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
 import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
+import { redirect } from "next/navigation";
 
 export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
@@ -21,7 +22,7 @@ export default function CreateEvent() {
     };
   
     const addEventCategory = () => {
-      setEventCategories([...eventCategories, new EventCategory({id: categoryIndex, name: '', participantsperteam: 0, style: ''})]);
+      setEventCategories([...eventCategories, new EventCategory({id: categoryIndex, name: '', participantsperteam: undefined, style: ''})]);
       setCategoryIndex(categoryIndex+1);
     }
 
@@ -42,6 +43,7 @@ export default function CreateEvent() {
       })));
       await addCategoriesCommandHandler(command);
       setLoading(false);
+      redirect('/event');
     };
   
     return (

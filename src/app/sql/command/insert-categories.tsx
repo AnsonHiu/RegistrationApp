@@ -3,7 +3,6 @@
 import EventCategory from '@/app/model/event-category.model';
 import AddCategoriesCommand from '@/app/model/commands/add-categories-command.model';
 import { QueryResult, QueryResultRow, sql } from '@vercel/postgres';
-import { redirect } from 'next/navigation';
  
 export default async function addCategoriesCommandHandler(command: AddCategoriesCommand) {
     try {
@@ -12,7 +11,6 @@ export default async function addCategoriesCommandHandler(command: AddCategories
     } catch (error) {
         return { message: error, status: 500 };
     }
-    redirect('/event');
 }
 
 async function addCategory(category: EventCategory, eventId: number): Promise<QueryResult<QueryResultRow>> {

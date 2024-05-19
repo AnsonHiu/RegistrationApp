@@ -35,21 +35,14 @@ export function CreateBattleCategory(
     }
 
     return (
-        <table className="mt-5">
-            <tbody>     
-                <tr>
-                    <td><label>Category</label></td>
-                    <td><input type="text" value={props.eventCategory.name} onChange={categoryNameUpdated}/></td>
-                </tr>
-                <tr>
-                    <td><label>Participants per team</label></td>
-                    <td><input type="number" value={props.eventCategory.participantsperteam} onChange={participantsNoUpdated}/></td>
-                </tr>
-                <tr>
-                    <td><label>Style</label></td>
-                    <td><input type="text" value={props.eventCategory.style} onChange={styleChanged}/></td>
-                </tr>
-            </tbody>
-        </table>
+        <div className="mt-5 flex flex-col">
+            <input className='mt-2' type="text" value={props.eventCategory.name} onChange={categoryNameUpdated} placeholder="Category Name"/>
+            <input className='mt-2' type="number" 
+                value={props.eventCategory.participantsperteam}
+                onChange={participantsNoUpdated}
+                placeholder="Participants per team"
+                min='1'/>
+            <input className='mt-2' type="text" value={props.eventCategory.style} onChange={styleChanged} placeholder="Style"/>
+        </div>
     );
 }

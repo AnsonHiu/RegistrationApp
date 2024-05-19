@@ -1,5 +1,5 @@
 export default class EventCategory {
-    constructor(data: {id: number, name: string, style: string, participantsperteam: number}){
+    constructor(data: {id: number, name: string, style: string, participantsperteam: number | undefined}){
         this.id = data.id;
         this.name = data.name;
         this.style = data.style;
@@ -9,5 +9,5 @@ export default class EventCategory {
     id: number;
     name: string;
     style: string;
-    participantsperteam: number;
+    participantsperteam: number | undefined;
 }

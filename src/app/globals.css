@@ -129,3 +129,7 @@ a:last-child {
 a:hover {
     color: #2563EB;
 }
+
+.view-event {
+    min-width: 310px;
+}

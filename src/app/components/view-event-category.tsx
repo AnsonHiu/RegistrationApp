@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import CreateParticipant from "../participant/create/create-participant";
+import CreateParticipant from "./create-participant";
 import EventCategory from "@/app/model/event-category.model";
 import Participant from "@/app/model/participant.model";
 import Team from "@/app/model/team.model";
-import CreateTeam from "../team/create/create-team";
+import CreateTeam from "./create-team";
 import addParticipantsCommandHandler from "@/app/sql/command/insert-participants";
 import addTeamsCommandHandler from "@/app/sql/command/insert-teams";
 import AddParticipantsCommand from "@/app/model/commands/add-participants-command.model";
@@ -51,12 +51,17 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
     }, []);
 
     function addParticipant() {
-        const newParticipant = new Participant({dancername: '', paid: false, signedin: false, id: undefined, name: '', email: ''});
+        const newParticipant = new Participant();
         setNewParticipants([...newParticipants, newParticipant]);
     }
     
     function addTeam() {
-        const newTeam = new Team({id: undefined, name: '', paid: false, signedin: false});
+        let participants = [];
+        for(let i=0; i<(props.eventCategory.participantsperteam ?? 1); i++){
+            participants.push(new Participant());
+        }
+        const newTeam = new Team({id: undefined, name: '', paid: false, signedin: false, participants: [...participants]});
+        console.log(newTeam);
         setNewTeams([...newTeams, newTeam]);
     }
 
@@ -110,55 +115,61 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
     }
 
     return (
-        <div className="mt-5">
+        <div className="mt-10">
             { props.eventCategory.participantsperteam === 1 && 
                 <button type="button" className="secondary" onClick={addParticipant}>Add Participant</button> }
-            { props.eventCategory.participantsperteam > 1 && 
+            { props.eventCategory.participantsperteam && props.eventCategory.participantsperteam > 1 && 
                 <button type="button" className="secondary" onClick={addTeam}>Add Team</button> }
             <p>Style: {props.eventCategory.style}</p>
             { newParticipants.map((participant, index) => (
                 <CreateParticipant key={index} id={index} participant={participant} updateParticipant={updateParticipant}/>
             ))}
             { newTeams.map((team, index) => (
-                <CreateTeam key={index} id={index} team={team} updateTeam={updateTeam}/>
+                <CreateTeam key={index}
+                    id={index}
+                    team={team}
+                    updateTeam={updateTeam}/>
             ))}
-            <h2 className="mt-5">Participants</h2>
-                    <table className="mt-5">
-                        <thead>
-                            <tr>
-                                <td></td>
-                                <td>Paid</td>
-                                <td>Signed In</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { participants.map((participant, index) => (
-                                <tr key={index}>
-                                    <td>{participant.dancername}</td>
-                                    <td>{participant.paid}</td>
-                                    <td>{participant.signedin}</td>
+            { participants.length > 0 || teams.length > 0 && <h2 className="mt-5">Participants</h2> }
+                    { props.eventCategory.participantsperteam == 1 && participants.length > 0 &&
+                        <table className="mt-5">
+                            <thead>
+                                <tr>
+                                    <td>Paid</td>
+                                    <td>Signed In</td>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <table className="mt-5">
-                        <thead>
-                            <tr>
-                                <td></td>
-                                <td>Paid</td>
-                                <td>Signed In</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            { teams.map((team, index) => (
-                                <tr key={index}>
-                                    <td>{team.name}</td>
-                                    <td>{team.paid}</td>
-                                    <td>{team.signedin}</td>
+                            </thead>
+                            <tbody>
+                                { participants.map((participant, index) => (
+                                    <tr key={index}>
+                                        <td>{participant.dancername}</td>
+                                        <td>{participant.paid ? 'T' : 'F'}</td>
+                                        <td>{!!participant.signedin ? 'T' : 'F'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    }
+                    { props.eventCategory.participantsperteam && props.eventCategory.participantsperteam > 1 && teams.length > 0 &&
+                        <table className="mt-5">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td>Paid</td>
+                                    <td>Signed In</td>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                { teams.map((team, index) => (
+                                    <tr key={index}>
+                                        <td>{team.name}</td>
+                                        <td>{team.paid ? 'T' : 'F'}</td>
+                                        <td>{team.signedin ? 'T' : 'F'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    }
             { (newParticipants.length > 0 || newTeams.length > 0) && <button className="primary mt-5" onClick={save}>Save</button>}
         </div>
     );
