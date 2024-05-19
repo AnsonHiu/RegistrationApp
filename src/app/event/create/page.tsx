@@ -12,6 +12,7 @@ export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
     const [eventCategories, setEventCategories] = useState<EventCategory[]>([]);
     const [categoryIndex, setCategoryIndex] = useState(0);
+    const [loading, setLoading] = useState(false);
   
     const showSubmitButton = eventCategories.length > 0;
 
@@ -30,6 +31,7 @@ export default function CreateEvent() {
     }
   
     const createEvent = async (event: {preventDefault: () => void}) => {
+      setLoading(true);
       event.preventDefault();
       await addEventCommand(eventName);
       const events = await getEventsByName(eventName);
@@ -39,6 +41,7 @@ export default function CreateEvent() {
         eventId: eventId
       })));
       await addCategoriesCommandHandler(command);
+      setLoading(false);
     };
   
     return (
@@ -54,7 +57,7 @@ export default function CreateEvent() {
                   <CreateBattleCategory key={index} eventCategory={eventCategory} updateBattleCategory={updateEventCategories} />
                 ))}
               </div>
-              {showSubmitButton && <button type="submit" className="button primary mt-5">Submit</button>}
+              {showSubmitButton && <button type="submit" disabled={loading} className="button primary mt-5">Submit</button>}
           </form>
     </div>
     );
