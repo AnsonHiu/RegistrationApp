@@ -10,10 +10,10 @@ interface IParticipant {
 export default class Participant {
     id: number | undefined;
     name: string | undefined;
-    dancername: string;
+    dancername: string | undefined;
     email: string | undefined;
-    signedin: boolean;
-    paid: boolean;
+    signedin: boolean = false;
+    paid: boolean = false;
 
     constructor(participant?: IParticipant){
         this.dancername = participant?.dancername ?? '';

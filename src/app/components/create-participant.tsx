@@ -7,46 +7,38 @@ export default function CreateParticipant(props: { id: number, participant: Part
 ){
     useEffect(() => {
         if(props.participant.id === undefined){
-            let participantToUpdate = new Participant(props.participant);
-            participantToUpdate.id = props.id;
-            props.updateParticipant(participantToUpdate);
+            const id = props.id;
+            props.updateParticipant({...props.participant, id});
         }
     }, []);
 
     function updateParticipantName(event: React.ChangeEvent<HTMLInputElement>) {
-        let participantToUpdate = new Participant(props.participant);
-        participantToUpdate.name = event.target.value;
-        props.updateParticipant(participantToUpdate);
+        const name = event.target.value;
+        props.updateParticipant({...props.participant, name});
     }
 
     function updateParticipantDancerName(event: React.ChangeEvent<HTMLInputElement>) {
-        let participantToUpdate = new Participant(props.participant);
-        participantToUpdate.dancername = event.target.value;
-        props.updateParticipant(participantToUpdate);
+        const dancername = event.target.value;
+        props.updateParticipant({...props.participant, dancername});
     }
 
     function updateParticipantEmail(event: React.ChangeEvent<HTMLInputElement>) {
-        let participantToUpdate = new Participant(props.participant);
-        participantToUpdate.email = event.target.value;
-        props.updateParticipant(participantToUpdate);
+        const email = event.target.value;
+        props.updateParticipant({...props.participant, email});
     }
 
     function updateParticipantSignedIn(event: React.ChangeEvent<HTMLInputElement>) {
-        let participantToUpdate = new Participant(props.participant);
-        console.log(event.target.checked);
-        participantToUpdate.signedin = !!event.target.checked;
-        props.updateParticipant(participantToUpdate);
+        const signedin = !!event.target.checked;
+        props.updateParticipant({...props.participant, signedin});
     }
 
     function updateParticipantPaid(event: React.ChangeEvent<HTMLInputElement>) {
-        let participantToUpdate = new Participant(props.participant);
-        console.log(event.target.checked);
-        participantToUpdate.paid = !!event.target.checked;
-        props.updateParticipant(participantToUpdate);
+        const paid = !!event.target.checked;
+        props.updateParticipant({...props.participant, paid});
     }
 
     return (
-        <form className="mt-5">
+        <div className="mt-5">
             <input type='text' placeholder="Participant Name" value={props.participant.name} onChange={updateParticipantName}/>
             <input className="mt-2" type='text' placeholder="Dancer Name" value={props.participant.dancername} onChange={updateParticipantDancerName} />
             <input className="mt-2" type='text' placeholder="Participant Email" value={props.participant.email} onChange={updateParticipantEmail} />
@@ -54,6 +46,6 @@ export default function CreateParticipant(props: { id: number, participant: Part
                 <label className="flex mr-5"><span className="mr-2">Signed In</span><input className="self-center" type="checkbox" checked={props.participant.signedin} onChange={updateParticipantSignedIn} /></label>
                 <label className="flex"><span className="mr-2">Paid</span><input className="self-center" type="checkbox" checked={props.participant.paid} onChange={updateParticipantPaid} /></label>
             </div>
-        </form>
+        </div>
     );
 }

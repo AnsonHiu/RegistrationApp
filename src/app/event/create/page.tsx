@@ -7,7 +7,7 @@ import EventCategory from "@/app/model/event-category.model";
 import { getEventsByName } from "@/app/sql/query/get-events-by-name";
 import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
 import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
-import { redirect } from "next/navigation";
+import { navigateToEvent } from "@/app/client-redirect";
 
 export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
@@ -43,7 +43,7 @@ export default function CreateEvent() {
       })));
       await addCategoriesCommandHandler(command);
       setLoading(false);
-      redirect('/event');
+      await navigateToEvent();
     };
   
     return (

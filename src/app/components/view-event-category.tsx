@@ -9,7 +9,6 @@ import Team from "@/app/model/team.model";
 import CreateTeam from "./create-team";
 import addParticipantsCommandHandler from "@/app/sql/command/insert-participants";
 import addTeamsCommandHandler from "@/app/sql/command/insert-teams";
-import AddParticipantsCommand from "@/app/model/commands/add-participants-command.model";
 import AddTeamsCommand from "@/app/model/commands/add-teams-command.model";
 import { getParticipants } from "@/app/sql/query/get-participants";
 import { getTeams } from "@/app/sql/query/get-teams";
@@ -46,7 +45,7 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
             setTeams(teams);
         }
         fetchTeams().catch(console.log);
-
+        
         return () => { cancel = true };
     }, []);
 
@@ -58,10 +57,14 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
     function addTeam() {
         let participants = [];
         for(let i=0; i<(props.eventCategory.participantsperteam ?? 1); i++){
-            participants.push(new Participant());
+            const newTeamParticipant = new Participant();
+            newTeamParticipant.id = i;
+            participants.push(newTeamParticipant);
         }
-        const newTeam = new Team({id: undefined, name: '', paid: false, signedin: false, participants: [...participants]});
-        console.log(newTeam);
+        const newTeamId = newTeams.length > 0 
+            ? newTeams.reduce((prev, current) => (prev ?? 0) > (current?.id ?? 0) ? prev : (current?.id ?? 0), newTeams[0].id) ?? 0 + 1
+            : 0
+        const newTeam = new Team({id: newTeamId, name: '', paid: false, signedin: false, participants: [...participants]});
         setNewTeams([...newTeams, newTeam]);
     }
 
@@ -91,10 +94,10 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
         try{
             if(newParticipants.length > 0) {
                 await addParticipantsCommandHandler(
-                    JSON.parse(JSON.stringify(new AddParticipantsCommand({
+                    JSON.parse(JSON.stringify({
                         participants: newParticipants,
                         eventCategoryId: props.eventCategory.id
-                    })))
+                    }))
                 );
                 setNewParticipants([]);
                 const participants = await getParticipants(props.eventCategory.id);
@@ -107,6 +110,9 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                         eventCategoryId: props.eventCategory.id
                     })))
                 );
+                setNewTeams([]);
+                const teams = await getTeams(props.eventCategory.id);
+                setTeams(teams);
             }
         // TODO: error handling
         } catch (error) {
@@ -135,6 +141,7 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                         <table className="mt-5">
                             <thead>
                                 <tr>
+                                    <td>Name</td>
                                     <td>Paid</td>
                                     <td>Signed In</td>
                                 </tr>
@@ -143,8 +150,8 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                                 { participants.map((participant, index) => (
                                     <tr key={index}>
                                         <td>{participant.dancername}</td>
-                                        <td>{participant.paid ? 'T' : 'F'}</td>
-                                        <td>{!!participant.signedin ? 'T' : 'F'}</td>
+                                        <td>{participant.paid ? 'x' : ''}</td>
+                                        <td>{participant.signedin ? 'x' : ''}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -155,17 +162,29 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                             <thead>
                                 <tr>
                                     <td></td>
+                                    <td></td>
                                     <td>Paid</td>
                                     <td>Signed In</td>
                                 </tr>
                             </thead>
                             <tbody>
-                                { teams.map((team, index) => (
-                                    <tr key={index}>
+                                { teams.map((team) => (
+                                    <>
+                                    <tr key={team.id}>
                                         <td>{team.name}</td>
-                                        <td>{team.paid ? 'T' : 'F'}</td>
-                                        <td>{team.signedin ? 'T' : 'F'}</td>
+                                        <td></td>
+                                        <td>{team.participants.every(participant => participant.paid) ? 'x' : ''}</td>
+                                        <td>{team.participants.every(participant => participant.signedin) ? 'x' : ''}</td>
                                     </tr>
+                                    {team.participants.map((participant) => (
+                                        <tr key={[team.id, participant.id].join('-')}>
+                                            <td></td>
+                                            <td>{participant.dancername}</td>
+                                            <td>{participant.paid ? 'x' : ''}</td>
+                                            <td>{participant.signedin ? 'x' : ''}</td>
+                                        </tr>
+                                    ))}
+                                    </>
                                 ))}
                             </tbody>
                         </table>

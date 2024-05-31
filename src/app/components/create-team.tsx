@@ -1,52 +1,52 @@
 import Team from "@/app/model/team.model";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateParticipant from "./create-participant";
 import Participant from "../model/participant.model";
 
 export default function CreateTeam(props: { id: number, team: Team, updateTeam: (team: Team) => void }) {
+    const [team, setTeam] = useState<Team>(props.team);
+
     useEffect(() => {
         if(props.team.id === undefined){
             let teamToUpdate = new Team(props.team);
             teamToUpdate.id = props.id;
             props.updateTeam(teamToUpdate);
-            console.log(props.team);
         }
     }, []);
 
+    useEffect(() => {
+        setTeam(props.team);
+    }, []);
+
     function updateTeamName(event: React.ChangeEvent<HTMLInputElement>) {
-        let teamToUpdate = new Team(props.team);
-        teamToUpdate.name = event.target.value;
-        props.updateTeam(teamToUpdate);
+        const name = event.target.value;
+        const updatedTeam = {...team, name};
+        setTeam(updatedTeam);
+        props.updateTeam(updatedTeam);
     }
 
-    function updateSignedIn(event: React.ChangeEvent<HTMLInputElement>) {
-        let teamToUpdate = new Team(props.team);
-        teamToUpdate.signedin = event.target.checked;
-        props.updateTeam(teamToUpdate);        
-    }
-
-    function updatePaid(event: React.ChangeEvent<HTMLInputElement>) {
-        let teamToUpdate = new Team(props.team);
-        teamToUpdate.paid = event.target.checked;
-        props.updateTeam(teamToUpdate);        
-    }
-
-    function updateParticipant(participant: Participant) {
-
+    function updateParticipant(updatedParticipant: Participant) {
+        let existingParticipantIndex = team.participants.findIndex(participant => participant.id === updatedParticipant.id);
+        if(existingParticipantIndex === -1) {
+            existingParticipantIndex = team.participants.findIndex(participant => participant.id === undefined);
+        }
+        if(existingParticipantIndex === -1) {
+            return;
+        }
+        const participants = [...team.participants.slice(0, existingParticipantIndex), updatedParticipant, ...team.participants.slice(existingParticipantIndex+1)]
+        const updatedTeam = {...team, participants};
+        setTeam(updatedTeam);
+        props.updateTeam(updatedTeam);
     }
 
     return (
-        <form className="mt-5">
+        <div className="mt-5">
             <input type='text' placeholder="Team Name" onChange={updateTeamName}/>
-            <div className="flex mt-2">
-                <label className="flex mr-5"><span className="mr-2">Signed In</span><input className="self-center" type="checkbox" onChange={updateSignedIn} /></label>
-                <label className="flex"><span className="mr-2">Paid</span><input className="self-center" type="checkbox" onChange={updatePaid} /></label>
-            </div>
             <div className="flex flex-row mt-2">
-                {props.team.participants.map((participant, index) => (
+                {team.participants.map((participant, index) => (
                     <CreateParticipant key={index} id={index} participant={participant} updateParticipant={updateParticipant}/> 
                 ))}
             </div>
-        </form>
+        </div>
     );
 }
