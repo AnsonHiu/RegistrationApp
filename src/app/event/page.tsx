@@ -1,5 +1,5 @@
 import { getEvents } from "../sql/query/get-events";
-import Event from '../model/event.model';
+import { Event } from '../model/event.model';
 import Link from "next/link";
 
 export default async function ViewEvents(){

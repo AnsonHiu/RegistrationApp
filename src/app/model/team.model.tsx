@@ -1,4 +1,4 @@
-import Participant from "./participant.model";
+import { Participant } from "./participant.model";
 
 interface ITeam {
     id: number | undefined;
@@ -6,7 +6,7 @@ interface ITeam {
     participants: Participant[];
 }
 
-export default class Team {
+export class Team {
     constructor(data: ITeam){
         this.id = data.id;
         this.name = data.name;

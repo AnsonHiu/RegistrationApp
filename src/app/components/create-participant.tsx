@@ -1,9 +1,9 @@
 'use client'
 
-import Participant from "@/app/model/participant.model";
+import { Participant } from "@/app/model/participant.model";
 import { useEffect } from "react";
 
-export default function CreateParticipant(props: { id: number, participant: Participant, updateParticipant: (participant: Participant) => void }
+export function CreateParticipant(props: { id: number, participant: Participant, updateParticipant: (participant: Participant) => void }
 ){
     useEffect(() => {
         if(props.participant.id === undefined){

@@ -1,9 +1,9 @@
 'use server'
 
-import Participant from '@/app/model/participant.model';
+import { Participant } from '@/app/model/participant.model';
 import { sql } from '@vercel/postgres';
  
-export default async function updateParticipantsCommandHandler(command: UpdateParticipantsCommand): Promise<Participant[]> {
+export async function updateParticipantsCommandHandler(command: UpdateParticipantsCommand): Promise<Participant[]> {
     try {
         const updateParticipantTasks = command.participants.map(participant => updateParticipant(participant));
         return await Promise.all(updateParticipantTasks);

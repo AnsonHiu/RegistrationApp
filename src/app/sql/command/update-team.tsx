@@ -1,10 +1,10 @@
 'use server'
 
 import { sql } from '@vercel/postgres';
-import Team from '@/app/model/team.model';
-import updateParticipantsCommandHandler from './update-participants';
+import { Team } from '@/app/model/team.model';
+import { updateParticipantsCommandHandler } from './update-participants';
  
-export default async function updateTeamCommandHandler(command: UpdateTeamCommand):Promise<Team> {
+export async function updateTeamCommandHandler(command: UpdateTeamCommand):Promise<Team> {
     try {
         const updatedTeam = await updateTeam(command.team);
         if(command.team.participants.some(participant => participant)) {

@@ -1,7 +1,7 @@
-import EventCategory from "../model/event-category.model";
-import Participant from "../model/participant.model";
+import { EventCategory } from "../model/event-category.model";
+import { Participant } from "../model/participant.model";
 
-export default function ViewParticipants(props: {participants: Participant[], eventCategory: EventCategory}) {
+export function ViewParticipants(props: {participants: Participant[], eventCategory: EventCategory}) {
     return(
         <>
             { props.eventCategory.participantsperteam === 1 && props.participants.length > 0 && <h2 className="mt-5">Participants</h2> }
@@ -12,6 +12,7 @@ export default function ViewParticipants(props: {participants: Participant[], ev
                             <td>Name</td>
                             <td>Paid</td>
                             <td>Signed In</td>
+                            <td>Action</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -20,6 +21,7 @@ export default function ViewParticipants(props: {participants: Participant[], ev
                                 <td>{participant.dancername}</td>
                                 <td>{participant.paid ? 'x' : ''}</td>
                                 <td>{participant.signedin ? 'x' : ''}</td>
+                                <td><button className="button primary">Update</button></td>
                             </tr>
                         ))}
                     </tbody>

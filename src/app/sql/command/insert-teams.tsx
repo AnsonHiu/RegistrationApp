@@ -1,11 +1,11 @@
 'use server'
 
 import { sql } from '@vercel/postgres';
-import Team from '@/app/model/team.model';
-import addParticipantsCommandHandler from './insert-participants';
+import { Team } from '@/app/model/team.model';
+import { addParticipantsCommandHandler } from './insert-participants';
 import { InsertTeamsCommand } from '../model/command/insert-teams-command.model';
  
-export default async function addTeamsCommandHandler(command: InsertTeamsCommand):Promise<Team[]> {
+export async function addTeamsCommandHandler(command: InsertTeamsCommand):Promise<Team[]> {
     try {
         let teams: Team[] = [];
         for (let i = 0; i<command.teams.length; i++){

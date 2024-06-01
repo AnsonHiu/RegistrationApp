@@ -1,9 +1,9 @@
-import Team from "@/app/model/team.model";
+import { Team } from "@/app/model/team.model";
 import { useEffect, useState } from "react";
-import CreateParticipant from "./create-participant";
-import Participant from "../model/participant.model";
+import { CreateParticipant } from "./create-participant";
+import { Participant } from "../model/participant.model";
 
-export default function CreateTeam(props: { id: number, team: Team, updateTeam: (team: Team) => void }) {
+export function CreateTeam(props: { id: number, team: Team, updateTeam: (team: Team) => void }) {
     const [team, setTeam] = useState<Team>(props.team);
 
     useEffect(() => {

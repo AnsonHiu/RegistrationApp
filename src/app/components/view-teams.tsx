@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import EventCategory from "../model/event-category.model";
-import Team from "../model/team.model";
-import CreateTeam, { UpdateTeamType } from "./create-team";
+import { EventCategory } from "../model/event-category.model";
+import { Team } from "../model/team.model";
+import { CreateTeam, UpdateTeamType } from "./create-team";
 
-export default function ViewTeams(
+export function ViewTeams(
     props: {
         teams: Team[],
         eventCategory: EventCategory,
         markTeamForEdit: (teamId: number, isUpdate: boolean) => void,
         saveTeam: (teamId: number) => void,
-        updateTeam: (updatedTeam: Team, updateType: UpdateTeamType) => void
+        updateTeam: (updatedTeam: Team, updateType: UpdateTeamType) => void,
+        deleteTeam: (teamId: number) => void
     }) {
     const [teams, setTeams] = useState<Team[]>([]);
     const editTeam = (teamId: number|undefined) => {
@@ -25,6 +26,12 @@ export default function ViewTeams(
     const saveTeam = (teamId: number | undefined) => {
         if(teamId){
             props.saveTeam(teamId);
+        }
+    }
+
+    const deleteTeam = (teamId: number | undefined) => {
+        if(teamId){
+            props.deleteTeam(teamId);
         }
     }
 
@@ -62,6 +69,7 @@ export default function ViewTeams(
                                 <td>{team.participants.every(participant => participant.paid) ? 'x' : ''}</td>
                                 <td>{team.participants.every(participant => participant.signedin) ? 'x' : ''}</td>
                                 <td><button className="primary button" onClick={() => editTeam(team.id)}>Edit</button></td>
+                                <td><button className="primary button" onClick={() => deleteTeam(team.id)}>Delete</button></td>
                             </tr>
                             {team.participants.map((participant) => (
                                 <tr key={[team.id, participant.id].join('-')}>

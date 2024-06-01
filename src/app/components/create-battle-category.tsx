@@ -1,4 +1,4 @@
-import EventCategory from "@/app/model/event-category.model";
+import { EventCategory } from "@/app/model/event-category.model";
 
 export function CreateBattleCategory(
     props: {

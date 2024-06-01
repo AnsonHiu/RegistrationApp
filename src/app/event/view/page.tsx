@@ -2,13 +2,13 @@
 
 import { getEvent } from "@/app/sql/query/get-event";
 import { getEventCategories } from "@/app/sql/query/get-event-categories";
-import EventCategoryView from "../../components/view-event-category";
-import EventCategory from "@/app/model/event-category.model";
-import Event from "@/app/model/event.model";
+import { EventCategoryView } from "../../components/view-event-category";
+import { EventCategory } from "@/app/model/event-category.model";
+import { Event } from "@/app/model/event.model";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { CreateBattleCategory } from "@/app/components/create-battle-category";
-import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
+import { addCategoriesCommandHandler } from "@/app/sql/command/insert-categories";
 import { InsertCategoriesCommand } from "@/app/sql/model/command/insert-category-command.model";
 
 export default function ViewEvent({searchParams}: {searchParams: {id: number}}){

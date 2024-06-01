@@ -2,21 +2,21 @@
 
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import CreateParticipant from "./create-participant";
-import EventCategory from "@/app/model/event-category.model";
-import Participant from "@/app/model/participant.model";
-import Team from "@/app/model/team.model";
-import CreateTeam from "./create-team";
-import addParticipantsCommandHandler from "@/app/sql/command/insert-participants";
-import addTeamsCommandHandler from "@/app/sql/command/insert-teams";
+import { CreateParticipant } from "./create-participant";
+import { EventCategory } from "@/app/model/event-category.model";
+import { Participant } from "@/app/model/participant.model";
+import { Team } from "@/app/model/team.model";
+import { CreateTeam } from "./create-team";
+import { addParticipantsCommandHandler } from "@/app/sql/command/insert-participants";
+import { addTeamsCommandHandler } from "@/app/sql/command/insert-teams";
 import { getParticipants } from "@/app/sql/query/get-participants";
 import { getTeams } from "@/app/sql/query/get-teams";
-import ViewParticipants from "./view-participants";
-import ViewTeams from "./view-teams";
-import updateTeamCommandHandler from "../sql/command/update-team";
+import { ViewParticipants } from "./view-participants";
+import { ViewTeams } from "./view-teams";
+import { updateTeamCommandHandler } from "../sql/command/update-team";
 import { InsertTeamsCommand } from "../sql/model/command/insert-teams-command.model";
 
-export default function EventCategoryView(props: { eventCategory: EventCategory }){
+export function EventCategoryView(props: { eventCategory: EventCategory }){
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [newParticipants, setNewParticipants] = useState<Participant[]>([]);
@@ -126,6 +126,13 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
         }
     }
 
+    async function deleteTeam(teamId: number) {
+        let teamIndex = teams.findIndex(team => team.id === teamId);
+        if(teamIndex !== -1) {
+            
+        }
+    }
+
     async function save() {
         try{
             if(newParticipants.length > 0) {
@@ -170,7 +177,13 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
             { (newParticipants.length > 0 || newTeams.length > 0) && <button className="primary mt-5" onClick={save}>Save</button>}
 
             <ViewParticipants participants={participants} eventCategory={props.eventCategory} />
-            <ViewTeams teams={teams} eventCategory={props.eventCategory} markTeamForEdit={markTeamForEdit} saveTeam={saveTeam} updateTeam={updateTeam}/>
+            <ViewTeams 
+                teams={teams}
+                eventCategory={props.eventCategory}
+                markTeamForEdit={markTeamForEdit}
+                saveTeam={saveTeam}
+                updateTeam={updateTeam}
+                deleteTeam={deleteTeam} />
         </div>
     );
 }

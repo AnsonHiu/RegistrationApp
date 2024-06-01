@@ -1,4 +1,4 @@
-export default class Event {
+export class Event {
     constructor(data: Event){
         this.id = data.id;
         this.name = data.name;

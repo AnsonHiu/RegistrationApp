@@ -7,7 +7,7 @@ interface IParticipant {
     paid: boolean;
 }
 
-export default class Participant {
+export class Participant {
     id: number | undefined;
     name: string | undefined;
     dancername: string | undefined;
