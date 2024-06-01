@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { CreateBattleCategory } from "@/app/components/create-battle-category";
 import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
-import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
+import { InsertCategoriesCommand } from "@/app/sql/model/command/insert-category-command.model";
 
 export default function ViewEvent({searchParams}: {searchParams: {id: number}}){
     const [event, setEvent] = useState<Event>();
@@ -47,7 +47,7 @@ export default function ViewEvent({searchParams}: {searchParams: {id: number}}){
 
     const addNewCategory = async () => {
         if(newCategory){
-            const command = JSON.parse(JSON.stringify(new AddCategoriesCommand({
+            const command = JSON.parse(JSON.stringify(new InsertCategoriesCommand({
             eventCategories: [newCategory],
             eventId: eventId
             })));

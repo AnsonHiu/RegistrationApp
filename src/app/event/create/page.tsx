@@ -6,8 +6,8 @@ import { addEventCommand } from "@/app/sql/command/insert-event";
 import EventCategory from "@/app/model/event-category.model";
 import { getEventsByName } from "@/app/sql/query/get-events-by-name";
 import addCategoriesCommandHandler from "@/app/sql/command/insert-categories";
-import AddCategoriesCommand from "@/app/model/commands/add-categories-command.model";
 import { navigateToEvent } from "@/app/client-redirect";
+import { InsertCategoriesCommand } from "@/app/sql/model/command/insert-category-command.model";
 
 export default function CreateEvent() {
     const [eventName, setEventName] = useState('');
@@ -37,7 +37,7 @@ export default function CreateEvent() {
       await addEventCommand(eventName);
       const events = await getEventsByName(eventName);
       const eventId = events[0].id;
-      const command = JSON.parse(JSON.stringify(new AddCategoriesCommand({
+      const command = JSON.parse(JSON.stringify(new InsertCategoriesCommand({
         eventCategories: eventCategories,
         eventId: eventId
       })));

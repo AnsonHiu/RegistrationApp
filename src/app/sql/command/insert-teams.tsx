@@ -1,34 +1,35 @@
 'use server'
 
-import { QueryResult, sql } from '@vercel/postgres';
-import AddTeamsCommand from '@/app/model/commands/add-teams-command.model';
+import { sql } from '@vercel/postgres';
 import Team from '@/app/model/team.model';
 import addParticipantsCommandHandler from './insert-participants';
+import { InsertTeamsCommand } from '../model/command/insert-teams-command.model';
  
-export default async function addTeamsCommandHandler(command: AddTeamsCommand) {
+export default async function addTeamsCommandHandler(command: InsertTeamsCommand):Promise<Team[]> {
     try {
-        let addParticipantTasks: Promise<{message: unknown, status: number} | undefined>[] = [];
-
-        command.teams.forEach(async team => {
-            const commandResult = await addTeam(team, command.eventCategoryId);
-            const teamId = commandResult.rows[0].id;
-            if(team.participants.length > 0) {
-                addParticipantTasks.push(addParticipantsCommandHandler({
+        let teams: Team[] = [];
+        for (let i = 0; i<command.teams.length; i++){
+            let team = command.teams[i];
+            const addedTeam = await addTeam(team, command.eventCategoryId);
+            if(team.participants.some(participant => participant)){
+                const addedParticipants = await addParticipantsCommandHandler({
                     participants: team.participants,
                     eventCategoryId: command.eventCategoryId,
-                    teamId: teamId ?? null
-                }))
+                    teamId: addedTeam.id ?? null
+                })
+                addedTeam.participants = addedParticipants;
             }
-        });
-        
-        await Promise.all([...addParticipantTasks])
+            teams.push(addedTeam);
+        }
+        return teams;
     } catch (error) {
-        return { message: error, status: 500 };
+        throw error;
     }
 }
 
-async function addTeam(team: Team, eventCategoryId: number): Promise<QueryResult<Team>> {
-    await sql`INSERT INTO Teams (Name, SignedIn, Paid, EventCategoryId) 
-    VALUES(${team.name}, ${team.signedin ? '1':'0'}, ${team.paid ? '1':'0'}, ${eventCategoryId})`
-    return await sql<Team>`SELECT * FROM Teams WHERE Name = ${team.name} AND EventCategoryId = ${eventCategoryId}`;
+async function addTeam(team: Team, eventCategoryId: number): Promise<Team> {
+    await sql`INSERT INTO Teams (Name, EventCategoryId) 
+    VALUES(${team.name}, ${eventCategoryId})`
+    const queryResult = await sql<Team>`SELECT * FROM Teams WHERE Name = ${team.name} AND EventCategoryId = ${eventCategoryId}`;
+    return queryResult.rows[0];
 }

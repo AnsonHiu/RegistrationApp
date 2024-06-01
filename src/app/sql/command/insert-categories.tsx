@@ -1,13 +1,14 @@
 'use server'
 
 import EventCategory from '@/app/model/event-category.model';
-import AddCategoriesCommand from '@/app/model/commands/add-categories-command.model';
 import { QueryResult, QueryResultRow, sql } from '@vercel/postgres';
+import { InsertCategoriesCommand } from '../model/command/insert-category-command.model';
  
-export default async function addCategoriesCommandHandler(command: AddCategoriesCommand) {
+export default async function addCategoriesCommandHandler(command: InsertCategoriesCommand) {
     try {
         const insertCategoryTasks = command.eventCategories.map(category => addCategory(category, command.eventId));
         await Promise.all([...insertCategoryTasks])
+        return {message: 'categories created', status: 204};
     } catch (error) {
         return { message: error, status: 500 };
     }

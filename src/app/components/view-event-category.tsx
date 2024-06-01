@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import CreateParticipant from "./create-participant";
 import EventCategory from "@/app/model/event-category.model";
@@ -9,9 +9,12 @@ import Team from "@/app/model/team.model";
 import CreateTeam from "./create-team";
 import addParticipantsCommandHandler from "@/app/sql/command/insert-participants";
 import addTeamsCommandHandler from "@/app/sql/command/insert-teams";
-import AddTeamsCommand from "@/app/model/commands/add-teams-command.model";
 import { getParticipants } from "@/app/sql/query/get-participants";
 import { getTeams } from "@/app/sql/query/get-teams";
+import ViewParticipants from "./view-participants";
+import ViewTeams from "./view-teams";
+import updateTeamCommandHandler from "../sql/command/update-team";
+import { InsertTeamsCommand } from "../sql/model/command/insert-teams-command.model";
 
 export default function EventCategoryView(props: { eventCategory: EventCategory }){
     const [participants, setParticipants] = useState<Participant[]>([]);
@@ -64,7 +67,7 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
         const newTeamId = newTeams.length > 0 
             ? newTeams.reduce((prev, current) => (prev ?? 0) > (current?.id ?? 0) ? prev : (current?.id ?? 0), newTeams[0].id) ?? 0 + 1
             : 0
-        const newTeam = new Team({id: newTeamId, name: '', paid: false, signedin: false, participants: [...participants]});
+        const newTeam = new Team({id: newTeamId, name: '', participants: [...participants]});
         setNewTeams([...newTeams, newTeam]);
     }
 
@@ -79,15 +82,48 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
         setNewParticipants([...newParticipants.slice(0, existingParticipantIndex), updatedParticipant, ...newParticipants.slice(existingParticipantIndex+1)]);
     }
 
-    function updateTeam(updatedTeam: Team) {
-        let existingTeamIndex = newTeams.findIndex(team => team.id === updatedTeam.id);
+    function updateTeam(updatedTeam: Team, teamToUpdate: 'NewTeam' | 'ExistingTeam'){
+        let existingTeamIndex = teamToUpdate === 'NewTeam'
+            ? newTeams.findIndex(team => team.id === updatedTeam.id)
+            : teams.findIndex(team => team.id === updatedTeam.id);
         if(existingTeamIndex === -1) {
             existingTeamIndex = newTeams.findIndex(team => team.id === undefined);
         }
         if(existingTeamIndex === -1) {
             return;
         }
-        setNewTeams([...newTeams.slice(0, existingTeamIndex), updatedTeam, ...newTeams.slice(existingTeamIndex+1)]);
+        
+        const actionToPass = teamToUpdate === 'NewTeam'
+            ? setNewTeams
+            : setTeams;
+        const teamsToUpdate = teamToUpdate === 'NewTeam'
+            ? newTeams
+            : teams;
+        updateState(actionToPass, teamsToUpdate, existingTeamIndex, updatedTeam);
+    }
+
+    function updateState<T>(methodToUpdate: Dispatch<SetStateAction<T[]>>, items: T[], index: number, updatedItem: T){
+        console.log(items);
+        methodToUpdate([...items.slice(0, index), updatedItem, ...items.slice(index+1)]);
+    }
+
+    function markTeamForEdit(id: number, isUpdate: boolean){
+        let teamIndex = teams.findIndex(team => team.id === id);
+        if(teamIndex != -1){
+            setTeams([...teams.slice(0, teamIndex), {...teams[teamIndex], isUpdate}, ...teams.slice(teamIndex+1)]);
+        }
+    }
+
+    async function saveTeam(teamId: number) {
+        let team = teams.find(team => team.id === teamId)
+        if(team){
+            const updatedTeam = await updateTeamCommandHandler({team: team});
+            let teamIndex = teams.findIndex(team => team.id === updatedTeam.id);
+            if(teamIndex != -1){
+                setTeams([...teams.slice(0, teamIndex), updatedTeam, ...teams.slice(teamIndex+1)]);
+            }
+            markTeamForEdit(teamId, false);
+        }
     }
 
     async function save() {
@@ -104,15 +140,14 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
                 setParticipants(participants);
             }
             if(newTeams.length > 0) {
-                await addTeamsCommandHandler(
-                    JSON.parse(JSON.stringify(new AddTeamsCommand({
+                const addedTeams = await addTeamsCommandHandler(
+                    JSON.parse(JSON.stringify(new InsertTeamsCommand({
                         teams: newTeams,
                         eventCategoryId: props.eventCategory.id
                     })))
                 );
                 setNewTeams([]);
-                const teams = await getTeams(props.eventCategory.id);
-                setTeams(teams);
+                setTeams([...teams, ...addedTeams]);
             }
         // TODO: error handling
         } catch (error) {
@@ -130,66 +165,12 @@ export default function EventCategoryView(props: { eventCategory: EventCategory 
             { newParticipants.map((participant, index) => (
                 <CreateParticipant key={index} id={index} participant={participant} updateParticipant={updateParticipant}/>
             ))}
-            { newTeams.map((team, index) => (
-                <CreateTeam key={index}
-                    id={index}
-                    team={team}
-                    updateTeam={updateTeam}/>
-            ))}
-            { participants.length > 0 || teams.length > 0 && <h2 className="mt-5">Participants</h2> }
-                    { props.eventCategory.participantsperteam == 1 && participants.length > 0 &&
-                        <table className="mt-5">
-                            <thead>
-                                <tr>
-                                    <td>Name</td>
-                                    <td>Paid</td>
-                                    <td>Signed In</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { participants.map((participant, index) => (
-                                    <tr key={index}>
-                                        <td>{participant.dancername}</td>
-                                        <td>{participant.paid ? 'x' : ''}</td>
-                                        <td>{participant.signedin ? 'x' : ''}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    }
-                    { props.eventCategory.participantsperteam && props.eventCategory.participantsperteam > 1 && teams.length > 0 &&
-                        <table className="mt-5">
-                            <thead>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td>Paid</td>
-                                    <td>Signed In</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { teams.map((team) => (
-                                    <>
-                                    <tr key={team.id}>
-                                        <td>{team.name}</td>
-                                        <td></td>
-                                        <td>{team.participants.every(participant => participant.paid) ? 'x' : ''}</td>
-                                        <td>{team.participants.every(participant => participant.signedin) ? 'x' : ''}</td>
-                                    </tr>
-                                    {team.participants.map((participant) => (
-                                        <tr key={[team.id, participant.id].join('-')}>
-                                            <td></td>
-                                            <td>{participant.dancername}</td>
-                                            <td>{participant.paid ? 'x' : ''}</td>
-                                            <td>{participant.signedin ? 'x' : ''}</td>
-                                        </tr>
-                                    ))}
-                                    </>
-                                ))}
-                            </tbody>
-                        </table>
-                    }
+            { newTeams.map((team, index) => (<CreateTeam key={index} id={index} team={team} updateTeam={(team) => updateTeam(team, 'NewTeam')}/> ))}
+
             { (newParticipants.length > 0 || newTeams.length > 0) && <button className="primary mt-5" onClick={save}>Save</button>}
+
+            <ViewParticipants participants={participants} eventCategory={props.eventCategory} />
+            <ViewTeams teams={teams} eventCategory={props.eventCategory} markTeamForEdit={markTeamForEdit} saveTeam={saveTeam} updateTeam={updateTeam}/>
         </div>
     );
 }

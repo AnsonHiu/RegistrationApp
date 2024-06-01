@@ -1,7 +1,7 @@
-import Team from '../team.model';
+import Team from "@/app/model/team.model";
 
-export default class AddTeamsCommand {
-    constructor(addTeamsCommand: AddTeamsCommand) {
+export class InsertTeamsCommand {
+    constructor(addTeamsCommand: InsertTeamsCommand) {
         this.teams = addTeamsCommand.teams;
         this.eventCategoryId = addTeamsCommand.eventCategoryId
     }

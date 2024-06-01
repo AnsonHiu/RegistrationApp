@@ -41,7 +41,7 @@ export default function CreateTeam(props: { id: number, team: Team, updateTeam: 
 
     return (
         <div className="mt-5">
-            <input type='text' placeholder="Team Name" onChange={updateTeamName}/>
+            <input type='text' placeholder="Team Name" onChange={updateTeamName} value={team.name}/>
             <div className="flex flex-row mt-2">
                 {team.participants.map((participant, index) => (
                     <CreateParticipant key={index} id={index} participant={participant} updateParticipant={updateParticipant}/> 
@@ -50,3 +50,5 @@ export default function CreateTeam(props: { id: number, team: Team, updateTeam: 
         </div>
     );
 }
+
+export type UpdateTeamType = 'NewTeam' | 'ExistingTeam';

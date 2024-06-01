@@ -1,21 +1,33 @@
 'use server'
 
-import IAddParticipantsCommand from '@/app/model/commands/add-participants-command.model';
 import Participant from '@/app/model/participant.model';
-import { QueryResult, QueryResultRow, sql } from '@vercel/postgres';
+import { sql } from '@vercel/postgres';
  
-export default async function addParticipantsCommandHandler(command: IAddParticipantsCommand) {
+export default async function addParticipantsCommandHandler(command: IAddParticipantsCommand): Promise<Participant[]> {
     try {
-        console.log(command);
         const insertCategoryTasks = command.participants.map(participant => addParticipant(participant, command.eventCategoryId, command.teamId));
-        await Promise.all([...insertCategoryTasks])
+        return await Promise.all([...insertCategoryTasks])
     } catch (error) {
-        console.log(error);
-        return { message: error, status: 500 };
+        throw error;
     }
     
-    async function addParticipant(participant: Participant, eventCategoryId: number, teamId: number | null): Promise<QueryResult<QueryResultRow>> {
-        return sql`INSERT INTO Participants (Name, DancerName, Email, SignedIn, Paid, EventCategoryId, TeamId) VALUES 
+    async function addParticipant(participant: Participant, eventCategoryId: number, teamId: number | null): Promise<Participant> {
+        await sql`INSERT INTO Participants (Name, DancerName, Email, SignedIn, Paid, EventCategoryId, TeamId) VALUES 
         (${participant.name}, ${participant.dancername}, ${participant.email}, ${participant.signedin ? 1 : 0}, ${participant.paid ? 1 : 0}, ${eventCategoryId}, ${teamId})`;
+        const query = teamId === null 
+            ? await sql<Participant>`SELECT * FROM Participants WHERE DancerName = ${participant.dancername} AND EventCategoryId = ${eventCategoryId}`
+            : await sql<Participant>`SELECT * FROM Participants WHERE DancerName = ${participant.dancername} AND EventCategoryId = ${eventCategoryId} AND TeamId = ${teamId}`; 
+            
+        return query.rows.map(participant => {
+            const paid = participant.paid == true;
+            const signedin = participant.signedin == true;
+            return {...participant, paid, signedin};
+        })[0];
     }
+}
+
+export interface IAddParticipantsCommand {
+    participants: Participant[];
+    eventCategoryId: number;
+    teamId: number | null;
 }
