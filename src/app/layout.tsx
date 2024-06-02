@@ -17,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={[inter.className, 'flex', 'flex-col'].join(' ')}>
         <Navigation />
-        <div className="container mx-auto flex justify-center mt-5">
+        <div className="container mx-auto flex justify-center mt-5 flex grow mb-5">
           {children}
         </div>
       </body>

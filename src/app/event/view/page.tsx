@@ -10,6 +10,7 @@ import clsx from "clsx";
 import { CreateBattleCategory } from "@/app/components/create-battle-category";
 import { addCategoriesCommandHandler } from "@/app/sql/command/insert-categories";
 import { InsertCategoriesCommand } from "@/app/sql/model/command/insert-category-command.model";
+import { navigateToCheckIn } from "@/app/client-redirect";
 
 export default function ViewEvent({searchParams}: {searchParams: {id: number}}){
     const [event, setEvent] = useState<Event>();
@@ -38,7 +39,7 @@ export default function ViewEvent({searchParams}: {searchParams: {id: number}}){
 
     const handleError = (error: Error) => {
         // TODO: handle error
-        console.log(error);
+        console.error(error);
     }
 
     const updateNewCategory = (update: {id: number, eventCategory: EventCategory}) => {
@@ -56,18 +57,25 @@ export default function ViewEvent({searchParams}: {searchParams: {id: number}}){
         }
     }
 
+    const toCheckin = async (eventCategoryId: number) => {
+        await navigateToCheckIn(eventCategoryId);
+    }
+
     return (
         <div className="view-event">
             <h1>{event && event.name}</h1>
             <ul>
-                {eventCategories?.map((category, index) => (
-                    <p key={category.id} 
-                        className={clsx({'clickable': true, 'bg-sky-100 text-blue-600': selectedCategory?.id === category.id})} 
-                        onClick={() => setSelectedCategory(category)}>
-                        {category.name}
-                    </p>
+                {eventCategories?.map((category) => (
+                    <div key={category.id} className="grid grid-cols-2 mt-1">
+                        <p key={category.id} 
+                            className={clsx({'clickable': true, 'bg-sky-100 text-blue-600': selectedCategory?.id === category.id})} 
+                            onClick={() => setSelectedCategory(category)}>
+                            {category.name}
+                        </p>
+                        <div className="ml-3"><span className='ml-3 clickable hover:text-blue-600' onClick={() => toCheckin(category.id)}>To Check-In View</span></div>
+                    </div>
                 ))}
-                <p className='clickable' onClick={() => setNewCategory({id: 0, name: '', participantsperteam: undefined, style: ''})}>+ Category</p>
+                <p className='clickable' onClick={() => setNewCategory({id: 0, name: '', participantsperteam: undefined, style: '', eventid: event?.id ?? undefined})}>+ Category</p>
             </ul>
             {
                 newCategory && 
