@@ -57,7 +57,7 @@ export function EventCategoryView(props: { eventCategory: EventCategory }){
 
     function addParticipant() {
         const newParticipantId = newParticipants.length > 0 
-            ? newParticipants.reduce((prev, current) => (prev ?? 0) > (current?.id ?? 0) ? prev : (current?.id ?? 0), newTeams[0].id) ?? 0 + 1
+            ? newParticipants.reduce((prev, current) => (prev ?? 0) > (current?.id ?? 0) ? prev : (current?.id ?? 0), newParticipants[0].id) ?? 0 + 1
             : 0
         const newParticipant = new Participant({dancername: '', email: '', id: newParticipantId, name: '', paid: false, signedin: false});
         setNewParticipants([...newParticipants, newParticipant]);
