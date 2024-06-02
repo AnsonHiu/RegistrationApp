@@ -1,4 +1,4 @@
-import Team from "@/app/model/team.model";
+import { Team } from "@/app/model/team.model";
 
 export class InsertTeamsCommand {
     constructor(addTeamsCommand: InsertTeamsCommand) {

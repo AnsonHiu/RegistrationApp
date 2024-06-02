@@ -1,6 +1,6 @@
 'use server'
 
-import Participant from '@/app/model/participant.model';
+import { Participant } from '@/app/model/participant.model';
 import { sql } from '@vercel/postgres';
 
 import { unstable_noStore } from 'next/cache';

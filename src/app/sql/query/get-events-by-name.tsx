@@ -1,7 +1,7 @@
 'use server'
 
 import { sql } from '@vercel/postgres';
-import Event from '@/app/model/event.model';
+import { Event } from '@/app/model/event.model';
  
 export async function getEventsByName(eventName: string) : Promise<Event[]>{
     try {

@@ -14,6 +14,7 @@ export class Participant {
     email: string | undefined;
     signedin: boolean = false;
     paid: boolean = false;
+    isUpdating: boolean = false;
 
     constructor(participant?: IParticipant){
         this.dancername = participant?.dancername ?? '';

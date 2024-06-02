@@ -12,14 +12,14 @@ export function ViewTeams(
         updateTeam: (updatedTeam: Team, updateType: UpdateTeamType) => void,
         deleteTeam: (teamId: number) => void
     }) {
-    const [teams, setTeams] = useState<Team[]>([]);
-    const editTeam = (teamId: number|undefined) => {
+    const [teams, setTeams] = useState<Team[]>(props.teams);
+    const markTeamForEdit = (teamId: number|undefined) => {
         if(teamId) {
             props.markTeamForEdit(teamId, true);
         }
     }
 
-    const update = (updatedTeam: Team) => {
+    const updateTeam = (updatedTeam: Team) => {
         props.updateTeam(updatedTeam, 'ExistingTeam');
     }
 
@@ -37,53 +37,49 @@ export function ViewTeams(
 
     useEffect(() => {
         setTeams(props.teams);
-    }, props.teams);
+    }, [props.teams]);
 
     return (
         <>
             { props.teams.length > 0 && <h2 className="mt-5">Teams</h2> }
             { props.eventCategory.participantsperteam && props.eventCategory.participantsperteam > 1 && props.teams.length > 0 &&
-                <table className="mt-5">
-                    <thead>
-                        <tr>
-                            <td>Team</td>
-                            <td>Participant</td>
-                            <td>Paid</td>
-                            <td>Signed In</td>
-                            <td>Actions</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { teams.map((team) => (
-                            (team.isUpdate && team.id)
-                            ? <tr>
-                                <td colSpan={4}>
-                                    <CreateTeam id={team.id} team={team} updateTeam={update} />
-                                    <button onClick={() => saveTeam(team.id)} className="button primary">Save</button>
-                                </td>
-                            </tr>
-                            : <>
-                            <tr key={team.id}>
-                                <td>{team.name}</td>
-                                <td></td>
-                                <td>{team.participants.every(participant => participant.paid) ? 'x' : ''}</td>
-                                <td>{team.participants.every(participant => participant.signedin) ? 'x' : ''}</td>
-                                <td><button className="primary button" onClick={() => editTeam(team.id)}>Edit</button></td>
-                                <td><button className="primary button" onClick={() => deleteTeam(team.id)}>Delete</button></td>
-                            </tr>
-                            {team.participants.map((participant) => (
-                                <tr key={[team.id, participant.id].join('-')}>
-                                    <td></td>
-                                    <td>{participant.dancername}</td>
-                                    <td>{participant.paid ? 'x' : ''}</td>
-                                    <td>{participant.signedin ? 'x' : ''}</td>
-                                    <td></td>
-                                </tr>
-                            ))}
-                            </>
+            <div>
+                <div className="mt-5 grid grid-cols-5 gap-4">
+                    <div className="justify-self-start">Team</div>
+                    <div className="justify-self-start">Participant</div>
+                    <div className="justify-self-center">Paid</div>
+                    <div className="justify-self-center">Signed In</div>
+                    <div className="justify-self-center">Actions</div>
+                </div>
+                { teams.map((team) => (
+                    (team.isUpdate && team.id)
+                    ? <div key={team.id}>
+                        <CreateTeam id={team.id} team={team} updateTeam={updateTeam} />
+                        <button onClick={() => saveTeam(team.id)} className="button primary">Save</button>
+                    </div>
+                    : <div key={team.id}>
+                        <div className="grid grid-cols-5">
+                            <div className="justify-self-start">{ team.name }</div>
+                            <div></div>
+                            <div className="justify-self-center">{team.participants.every(participant => participant.paid) ? 'x' : ''}</div>
+                            <div className="justify-self-center">{team.participants.every(participant => participant.signedin) ? 'x' : ''}</div>
+                            <div>
+                                <button className="secondary button mr-2" onClick={() => markTeamForEdit(team.id)}>Edit</button>
+                                <button className="secondary button" onClick={() => deleteTeam(team.id)}>Delete</button>
+                            </div>
+                        </div>
+                        {team.participants.map((participant) => (
+                            <div key={[team.id, participant.id].join('-')} className="grid grid-cols-5">
+                                <div></div>
+                                <div className="justify-self-start">{participant.dancername}</div>
+                                <div className="justify-self-center">{participant.paid ? 'x' : ''}</div>
+                                <div className="justify-self-center">{participant.signedin ? 'x' : ''}</div>
+                                <div></div>
+                            </div>
                         ))}
-                    </tbody>
-                </table>
+                    </div>
+                ))}
+            </div>
             }
         </>
     );

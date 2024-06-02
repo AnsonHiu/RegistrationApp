@@ -49,3 +49,5 @@ export function CreateParticipant(props: { id: number, participant: Participant,
         </div>
     );
 }
+
+export type UpdateParticipantType = 'NewParticipant' | 'ExistingParticipant';

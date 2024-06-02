@@ -6,16 +6,16 @@ import { getParticipants } from "../query/get-participants";
 import { DeleteParticipantsCommandHandler } from "./delete-participants";
 
  
-export async function deleteTeamsCommandHandler(command: DeleteTeamCommand) {
+export async function deleteTeamsCommandHandler(command: DeleteTeamCommand): Promise<void> {
     try {
         const teamParticipants = await getParticipants(null, command.teamId);
         if(teamParticipants.length > 0) {
-            const teamParticipantIds = teamParticipants.map(participant => participant.id).filter(id => id);
+            const teamParticipantIds = teamParticipants.map(participant => participant.id!);
             await DeleteParticipantsCommandHandler({participantIds: teamParticipantIds});
         }
-        return {message: 'categories created', status: 204};
+        await deleteTeam(command.teamId);
     } catch (error) {
-        return { message: error, status: 500 };
+        throw error;
     }
 }
 

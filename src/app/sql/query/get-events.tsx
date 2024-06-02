@@ -1,7 +1,7 @@
 'use server'
 
 import { sql } from '@vercel/postgres';
-import Event from '@/app/model/event.model';
+import { Event } from '@/app/model/event.model';
 import { unstable_noStore } from 'next/cache';
  
 export async function getEvents() : Promise<Event[]>{
